@@ -1,4 +1,7 @@
 # ScandyCoreReactNativeExample
+
+**WARNING CURRENTLY DEPRECRATED!**
+
 This is a React Native example using Scandy Core (scandy-core-rn)
 
 ## Installation and How to use

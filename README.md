@@ -1,8 +1,22 @@
 # ScandyCoreReactNativeExample
 
-**WARNING CURRENTLY DEPRECRATED!**
-
 This is a React Native example using Scandy Core (scandy-core-rn)
+
+## How we got here:
+
+1. ```react-native init ScandyCoreReactNativeExample```
+2. added `"react-navigation": "git+https://github.com/react-community/react-navigation.git#7edd9a7"` to dependencies in `package.json` _(note: this is a temporary fix given a conflict between react & this navigation library - if you aren't using react-navigation - don't sweat it)_
+3. ```yarn``` || ```npm install```
+4. create components for Home, Selection, Viewer screens
+4. add `scandy-core-rn` to `package.json`
+5. ```yarn``` || ```npm install```
+6. open `android/` in `Android Studio`
+7. check settings.gradle for `:scandy-core-rn` && filepath
+8. add to `app/build.gradle` dependencies `:scandy-core-rn`
+9. change minSdkVersion to match scandy-core - 21
+10. sync gradle
+11. add empty `app/src/main/assets/scandycore_license.json`
+    1. copy and paste your license from email
 
 ## Installation and How to use
 

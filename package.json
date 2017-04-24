@@ -1,5 +1,5 @@
 {
-	"name": "ReactNativeDemo",
+	"name": "ScandyCoreReactNativeExample",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
@@ -7,15 +7,16 @@
 		"test": "jest"
 	},
 	"dependencies": {
-		"react": "15.4.1",
-		"react-native": "0.39.2",
-		"scandy-core-rn": "file:./node_modules/scandy-core-rn"
+		"react": "16.0.0-alpha.6",
+		"react-native": "0.43.3",
+		"react-navigation": "git+https://github.com/react-community/react-navigation.git#7edd9a7",
+
 	},
 	"devDependencies": {
-		"babel-jest": "18.0.0",
+		"babel-jest": "19.0.0",
 		"babel-preset-react-native": "1.9.1",
-		"jest": "18.0.0",
-		"react-test-renderer": "15.4.1"
+		"jest": "19.0.2",
+		"react-test-renderer": "16.0.0-alpha.6"
 	},
 	"jest": {
 		"preset": "react-native"

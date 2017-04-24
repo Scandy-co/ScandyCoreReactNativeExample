@@ -12,7 +12,7 @@ import {
   View
 } from 'react-native';
 
-export default class ReactNativeDemo extends Component {
+export default class ScandyCoreReactNativeExample extends Component {
   render() {
     return (
       <View style={styles.container}>
@@ -50,4 +50,4 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('ReactNativeDemo', () => ReactNativeDemo);
+AppRegistry.registerComponent('ScandyCoreReactNativeExample', () => ScandyCoreReactNativeExample);

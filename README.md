@@ -2,28 +2,12 @@
 
 This is a React Native example using Scandy Core (scandy-core-rn)
 
-## How we got here:
-
-1. ```react-native init ScandyCoreReactNativeExample```
-2. added `"react-navigation": "git+https://github.com/react-community/react-navigation.git#7edd9a7"` to dependencies in `package.json` _(note: this is a temporary fix given a conflict between react & this navigation library - if you aren't using react-navigation - don't sweat it)_
-3. ```yarn``` || ```npm install```
-4. create components for Home, Selection, Viewer screens
-4. add `scandy-core-rn` to `package.json`
-5. ```yarn``` || ```npm install```
-6. open `android/` in `Android Studio`
-7. check settings.gradle for `:scandy-core-rn` && filepath
-8. add to `app/build.gradle` dependencies `:scandy-core-rn`
-9. change minSdkVersion to match scandy-core - 21
-10. sync gradle
-11. add empty `app/src/main/assets/scandycore_license.json`
-    1. copy and paste your license from email
-
-## Installation and How to use
+## Setup
 
 #### Step 1 - NPM Install
 
 ```shell
-npm install --save scandy-core-rn
+npm link dependencies/ScandyCore/scandy-core-rn
 ```
 #### Step 2 - Update Gradle Settings
 
@@ -31,8 +15,8 @@ npm install --save scandy-core-rn
 // file: android/settings.gradle
 ...
 
-include ':scandy-core-rn', ':app'
-project(':scandy-core-rn').projectDir = new File(rootProject.projectDir, '../libs/scandy-core/android')
+include ':scandy-core-rn'
+project(':scandy-core-rn').projectDir = new File(rootProject.projectDir, '../node_modules/scandy-core-rn/android')
 ```
 
 #### Step 3 - Update app Gradle Build
@@ -67,7 +51,12 @@ public class MainApplication extends Application implements ReactApplication {
 
 ```
 
-#### Step 5 - Require and use in Javascript
+#### Step 5 - Set license
+
+* Create the file: `android/app/src/main/assets/scandycore_license.json`
+* Paste your license from the email in `android/app/src/main/assets/scandycore_license.json`
+
+#### Step 6 - Require and use in Javascript
 
 ```js
 // file: index.android.js
@@ -113,6 +102,13 @@ const styles = StyleSheet.create({
 AppRegistry.registerComponent('ReactNativeDemo', () => ReactNativeDemo);
 ```
 
+## Building
+
+If you're unfamiliar with React Native maybe check out [their docs](https://facebook.github.io/react-native/).
+
+```bash
+react-native run-android
+```
 
 ## Notes
 - Please report any issues or send patches to get fixes in

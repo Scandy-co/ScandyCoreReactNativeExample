@@ -3,5 +3,5 @@ rootProject.name = 'ScandyCoreReactNativeExample'
 include ':app'
 
 include ':scandy-core-rn'
-project(':scandy-core-rn').projectDir = new File(rootProject.projectDir, '../node_modules/scandy-core-rn/android')
+project(':scandy-core-rn').projectDir = new File(rootProject.projectDir, '../dependencies/ScandyCore/scandy-core-rn/android')
 

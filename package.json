@@ -9,7 +9,8 @@
   "dependencies": {
     "react": "16.0.0-alpha.6",
     "react-native": "0.43.3",
-    "react-navigation": "git+https://github.com/react-community/react-navigation.git#7edd9a7"
+    "react-navigation": "git+https://github.com/react-community/react-navigation.git#7edd9a7",
+    "scandy-core-rn": "file:./dependencies/ScandyCore/scandy-core-rn"
   },
   "devDependencies": {
     "babel-jest": "19.0.0",

@@ -167,15 +167,24 @@ class ScannerScreen extends Component {
     ready: false,
     initialized: false,
     previewing: false,
-    scanning: false
+    scanning: false,
+    scanner: "/storage/emulated/0/Download/recording.rrf"
   }
 
   visualizer_ready = (res) => {
     this.listener.remove();
     if( res.success ){
+      ScandyCore.hasUSBScanner().then(
+        () => {
+          this.setState({scanner: ""});
+        }
+        , () => {
+          this.setState({scanner: "/storage/emulated/0/Download/recording.rrf"});
+        }
+      );
       ScandyCore.setLicense(scandycore_license.license).then(
         () => {
-          ScandyCore.initializeScanner("/storage/emulated/0/Download/recording.rrf")
+          ScandyCore.initializeScanner(this.state.scanner)
           .then(
             () => {
               this.setState({initialized:true});

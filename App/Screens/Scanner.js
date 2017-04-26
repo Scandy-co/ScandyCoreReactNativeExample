@@ -14,6 +14,9 @@ import {
   StyleSheet,
   Text,
   View,
+  Slider,
+  TextInput,
+  Alert,
   Button,
   Dimensions,
   DeviceEventEmitter,
@@ -34,6 +37,9 @@ export default class ScannerScreen extends Component {
     initialized: false,
     previewing: false,
     scanning: false,
+    has_scanned: false,
+    has_mesh: false,
+    mesh_name: "MESH NAME",
     scanner: "/storage/emulated/0/Download/recording.rrf"
   }
 
@@ -105,6 +111,7 @@ export default class ScannerScreen extends Component {
   }
 
   togglePreview = () => {
+    this.setState({ has_scanned: false })
     if( this.state.initialized ) {
       ScandyCore.startPreview().then(
         () => {
@@ -118,19 +125,28 @@ export default class ScannerScreen extends Component {
   }
 
   toggleScan = () => {
+    // has_mesh should always be reset when toggling a Scan,
+    // since whether just starting/stopping generateMesh has not been run on this session.
+    this.setState({ has_mesh: false })
+
     if( this.state.initialized && this.state.previewing ) {
       if( this.state.scanning ){
         ScandyCore.stopScanning().then(
           () => {
+            // On success we set scanning and previewing to false
+            // and has_scanned to true
             this.setState({
               scanning: false,
-              previewing: false
+              previewing: false,
+              has_scanned: true
             });
           }
           , () => {
+            // On failure we set scanning, previewing, and has_scanned to false
             this.setState({
               scanning: false,
-              previewing: false
+              previewing: false,
+              has_scanned: false
             });
           }
         )
@@ -147,24 +163,132 @@ export default class ScannerScreen extends Component {
     }
   }
 
+  renderScanButton() {
+    if( !this.state.previewing ){
+      return (
+        <Button onPress={this.togglePreview} title="Start Preview"/>
+      )
+    }
+    if( this.state.scanning ){
+      return (
+        <Button onPress={this.toggleScan} title="Stop Scan"/>
+      )
+    } else {
+      return (
+        <Button onPress={this.toggleScan} title="Start Scan"/>
+      )
+    }
+  }
+
+  renderConfigurationSliders() {
+    if( this.state.previewing ) {
+      return (
+        <View>
+          <Text>Size: </Text>
+          <Slider
+            disabled={!this.state.previewing}
+            value={3.0}
+            step={0.05}
+            minimumValue={0.1}
+            maximumValue={4.5}
+            onSlidingComplete={(val) => ScandyCore.setScanSize(val,val,val)}
+          >
+          </Slider>
+          <Text>Resolution: </Text>
+          <Slider
+            disabled={!this.state.previewing}
+            value={2}
+            step={1}
+            minimumValue={1}
+            maximumValue={3}
+            onSlidingComplete={(val) => ScandyCore.setResolution(val)}
+          >
+          </Slider>
+        </View>
+      )
+    }
+  }
+
+  createMesh = () => {
+    ScandyCore.generateMesh().then(
+      () => {
+        this.setState({has_mesh:true})
+      }
+      , () => {
+        this.setState({has_mesh:false})
+      }
+    )
+  }
+
+  saveMesh = () => {
+    function slugify(text) {
+      // https://gist.github.com/mathewbyrne/1280286
+      return text.toString().toLowerCase()
+        .replace(/\s+/g, '-')           // Replace spaces with -
+        .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+        .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+        .replace(/^-+/, '')             // Trim - from start of text
+        .replace(/-+$/, '');            // Trim - from end of text
+    }
+    let mesh_path = `/storage/emulated/0/Download/${slugify(this.state.mesh_name)}.ply`
+    ScandyCore.saveMesh(mesh_path).then(
+      () => {
+        Alert.alert(
+          'Saved your mesh!',
+          `Your mesh have been saved to: ${mesh_path}`,
+          [
+            {text: 'OK', onPress: () => console.log('OK Pressed')},
+          ],
+          { cancelable: false }
+        )
+        this.setState({has_mesh:false})
+      }
+      , () => {
+        Alert.alert(
+          'Failed to save your mesh!',
+          `We couldn't save your mesh, sorry.`,
+          [
+            {text: 'OK', onPress: () => console.log('OK Pressed')},
+          ],
+          { cancelable: false }
+        )
+        this.setState({has_mesh:false})
+      }
+    )
+  }
+
+  renderMeshButton() {
+    if( this.state.has_mesh ) {
+      return(
+        <View>
+          <TextInput
+            style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+            onChangeText={(text) => this.setState({mesh_name: text})}
+            value={this.state.mesh_name}
+          />
+        <Button onPress={this.saveMesh} title="Save Mesh"/>
+        </View>
+      )
+    }
+    if( this.state.has_scanned ) {
+      return(
+        <Button
+          onPress={this.createMesh}
+          title="Create Mesh"
+        />
+      )
+    }
+  }
+
   renderControls() {
     if( this.state.initialized ) {
-      if( !this.state.previewing ){
-        return (
-            <Button onPress={this.togglePreview} title="Start Preview"/>
-        )
-      }
-      if( this.state.initialized && this.state.previewing){
-        if( this.state.scanning ){
-          return (
-            <Button onPress={this.toggleScan} title="Stop Scan"/>
-          )
-        } else {
-          return (
-            <Button onPress={this.toggleScan} title="Start Scan"/>
-          )
-        }
-      }
+      return (
+        <View>
+          {this.renderScanButton()}
+          {this.renderConfigurationSliders()}
+          {this.renderMeshButton()}
+        </View>
+      )
     } else {
       return (
         <Text

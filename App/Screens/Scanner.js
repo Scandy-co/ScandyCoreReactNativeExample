@@ -34,6 +34,8 @@ export default class ScannerScreen extends Component {
 
   state = {
     message: "Initializing...",
+    scandycore_state_watcher: false,
+    scan_state: "",
     ready: false,
     initialized: false,
     previewing: false,
@@ -44,6 +46,24 @@ export default class ScannerScreen extends Component {
     use_case: "",
     mesh_name: "MESH NAME",
     scanner: "/storage/emulated/0/Download/recording.rrf"
+  }
+
+  componentDidMount() {
+    this.state.scandycore_state_watcher = setInterval( () => {
+      ScandyCore.getScanState().then((res) => {
+        this.setState({scan_state: res.scan_state});
+      })
+    }, 100);
+    this.listener = DeviceEventEmitter.addListener('onVisualizerReady', this.visualizer_ready);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.scandycore_state_watcher);
+    this.kill();
+  }
+
+  kill = () => {
+    ScandyCore.quit();
   }
 
   visualizer_ready = (res) => {
@@ -94,18 +114,6 @@ export default class ScannerScreen extends Component {
         }
       );
     }
-  }
-
-  componentDidMount() {
-    this.listener = DeviceEventEmitter.addListener('onVisualizerReady', this.visualizer_ready);
-  }
-
-  componentWillUnmount() {
-    this.kill();
-  }
-
-  kill = () => {
-    ScandyCore.quit();
   }
 
   renderVisualizer() {
@@ -332,6 +340,7 @@ export default class ScannerScreen extends Component {
     return (
       <View>
         <Button onPress={this.kill} title="Go Back"/>
+        <Text>Current scan state: {this.state.scan_state}</Text>
         {this.renderVisualizer()}
         {this.renderControls()}
       </View>

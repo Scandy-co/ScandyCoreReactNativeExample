@@ -1,3 +1,13 @@
+/****************************************************************************\
+ * Copyright (C) 2017 Scandy
+ *
+ * THIS CODE AND INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+ * KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+ * PARTICULAR PURPOSE.
+ *
+ \****************************************************************************/
+
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -10,9 +20,10 @@ import {
   Linking,
 } from 'react-native';
 
+import { ScandyCoreVisualizer, ScandyCore } from 'scandy-core-rn';
 import * as scandycore_license from '../scandycore_license';
 
-class ScannerScreen extends Component {
+export default class ScannerScreen extends Component {
   static navigationOptions = {
     title: 'Scanner',
   };

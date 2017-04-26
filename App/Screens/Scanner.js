@@ -16,6 +16,7 @@ import {
   View,
   Slider,
   TextInput,
+  Picker,
   Alert,
   Button,
   Dimensions,
@@ -39,6 +40,8 @@ export default class ScannerScreen extends Component {
     scanning: false,
     has_scanned: false,
     has_mesh: false,
+    use_cases: [],
+    use_case: "",
     mesh_name: "MESH NAME",
     scanner: "/storage/emulated/0/Download/recording.rrf"
   }
@@ -60,6 +63,15 @@ export default class ScannerScreen extends Component {
           .then(
             () => {
               this.setState({initialized:true});
+              ScandyCore.getUseCases().then(
+                (res) => {
+                  this.setState({
+                    use_cases:res.use_cases,
+                    use_case:res.use_cases[0]
+                  });
+                  console.log(`got use_cases: ${res.use_cases}`);
+                }
+              )
               console.log('finished Initialize!');
             }
           , () => {
@@ -182,6 +194,9 @@ export default class ScannerScreen extends Component {
 
   renderConfigurationSliders() {
     if( this.state.previewing ) {
+      let use_cases = this.state.use_cases.map( (use_case, i) => {
+          return <Picker.Item key={i} value={use_case} label={use_case} />
+      });
       return (
         <View>
           <Text>Size: </Text>
@@ -204,6 +219,17 @@ export default class ScannerScreen extends Component {
             onSlidingComplete={(val) => ScandyCore.setResolution(val)}
           >
           </Slider>
+          <Picker
+            selectedValue={this.state.use_case}
+            onValueChange={
+              (use_case) => {
+                ScandyCore.setUseCase(use_case);
+                this.setState({use_case: use_case});
+              }
+            }
+          >
+            {use_cases}
+          </Picker>
         </View>
       )
     }

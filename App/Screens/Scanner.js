@@ -191,7 +191,7 @@ export default class ScannerScreen extends Component {
             step={0.05}
             minimumValue={0.1}
             maximumValue={4.5}
-            onSlidingComplete={(val) => ScandyCore.setScanSize(val,val,val)}
+            onSlidingComplete={(val) => ScandyCore.setScanSize(val)}
           >
           </Slider>
           <Text>Resolution: </Text>

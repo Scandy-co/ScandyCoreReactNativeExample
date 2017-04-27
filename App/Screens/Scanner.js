@@ -27,6 +27,8 @@ import {
 import { ScandyCoreVisualizer, ScandyCore } from 'scandy-core-rn';
 import * as scandycore_license from '../scandycore_license';
 
+const FileSystem = require('react-native-fs');
+
 export default class ScannerScreen extends Component {
   static navigationOptions = {
     title: 'Scanner',
@@ -43,6 +45,9 @@ export default class ScannerScreen extends Component {
     has_scanned: false,
     has_mesh: false,
     use_cases: [],
+    scan_size: false,
+    resolution: false,
+    resolutions: [],
     use_case: "",
     mesh_name: "MESH NAME",
     scanner: "/storage/emulated/0/Download/recording.rrf"
@@ -83,7 +88,8 @@ export default class ScannerScreen extends Component {
           .then(
             () => {
               this.setState({initialized:true});
-              ScandyCore.getUseCases().then(
+              ScandyCore.getUseCases()
+              .then(
                 (res) => {
                   this.setState({
                     use_cases:res.use_cases,
@@ -92,6 +98,12 @@ export default class ScannerScreen extends Component {
                   console.log(`got use_cases: ${res.use_cases}`);
                 }
               )
+              .then(ScandyCore.getAvailableScanResolutions).then( (res) => {
+                this.setState({resolutions: res.resolutions})
+                console.log(`got resolutions: ${res.resolutions}`);
+              })
+              .then(this.updateScanSize)
+              .then(this.updateResolution);
               console.log('finished Initialize!');
             }
           , () => {
@@ -113,6 +125,8 @@ export default class ScannerScreen extends Component {
           console.log('failed to set license');
         }
       );
+    } else {
+      this.setState({message: "failed to create visualizer. Go back and try again"})
     }
   }
 
@@ -200,6 +214,49 @@ export default class ScannerScreen extends Component {
     }
   }
 
+  updateScanSize = (size) => {
+    if( size == null ){ size = 2.0 }
+    ScandyCore.setScanSize(size)
+    .then(
+      () => {
+        console.log("set scan size");
+      }
+      , () => {
+        console.log("failed to set scan size");
+      }
+    )
+    .then( () => {
+      ScandyCore.getScanSize()
+      .then(
+        (res) => {
+          this.setState({scan_size: res.size.x })
+        }, () => {
+          console.log("failed to get scan size");
+        }
+      )
+    })
+  }
+
+  updateResolution = (resolution) => {
+    if( resolution == null ){ resolution = this.state.resolutions.length/2 }
+    ScandyCore.setResolution(resolution)
+    .then(
+      () => {
+        console.log("set scan resolution");
+      }
+      , () => {
+        console.log("failed to set scan resolution");
+      }
+    )
+    .then( () => {
+      ScandyCore.getResolution().then( (res) => {
+        this.setState({resolution: res.resolution})
+      }, () => {
+        console.log("failed to get scan resolution");
+      })
+    })
+  }
+
   renderConfigurationSliders() {
     if( this.state.previewing ) {
       let use_cases = this.state.use_cases.map( (use_case, i) => {
@@ -207,24 +264,24 @@ export default class ScannerScreen extends Component {
       });
       return (
         <View>
-          <Text>Size: </Text>
+          <Text>Size:  { ( this.state.scan_size != false ? `${this.state.scan_size.toFixed(2)}m` : "-" )}</Text>
           <Slider
             disabled={!this.state.previewing}
             value={3.0}
             step={0.05}
             minimumValue={0.1}
             maximumValue={4.5}
-            onSlidingComplete={(val) => ScandyCore.setScanSize(val)}
+            onSlidingComplete={ this.updateScanSize }
           >
           </Slider>
-          <Text>Resolution: </Text>
+          <Text>Resolution: { ( this.state.resolution != false ? this.state.resolution.description : "-" )}</Text>
           <Slider
             disabled={!this.state.previewing}
-            value={2}
+            value={this.state.resolutions.length/2}
             step={1}
             minimumValue={1}
-            maximumValue={3}
-            onSlidingComplete={(val) => ScandyCore.setResolution(val)}
+            maximumValue={this.state.resolutions.length}
+            onSlidingComplete={this.updateResolution}
           >
           </Slider>
           <Picker
@@ -264,7 +321,7 @@ export default class ScannerScreen extends Component {
         .replace(/^-+/, '')             // Trim - from start of text
         .replace(/-+$/, '');            // Trim - from end of text
     }
-    let mesh_path = `/storage/emulated/0/Download/${slugify(this.state.mesh_name)}.ply`
+    let mesh_path = FileSystem.ExternalStorageDirectoryPath + '/Download/' + `${slugify(this.state.mesh_name)}.ply`
     ScandyCore.saveMesh(mesh_path).then(
       () => {
         Alert.alert(
@@ -336,7 +393,6 @@ export default class ScannerScreen extends Component {
 
   render() {
     const { params } = this.props.navigation.state;
-    console.log("props", this.props);
     return (
       <View>
         <Button onPress={this.kill} title="Go Back"/>

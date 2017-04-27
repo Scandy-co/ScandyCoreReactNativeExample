@@ -80,7 +80,6 @@ export default class ViewerScreen extends Component {
 
   render() {
     const { params } = this.props.navigation.state;
-    console.log("props", this.props);
     return (
       <View>
         <Button onPress={this.kill} title="Go Back"/>

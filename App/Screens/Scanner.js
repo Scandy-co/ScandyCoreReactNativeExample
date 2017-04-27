@@ -71,8 +71,13 @@ export default class ScannerScreen extends Component {
     ScandyCore.quit();
   }
 
+  onTrackingDidUpdate = (res) => {
+    console.log(JSON.stringify(res));
+  }
+
   visualizer_ready = (res) => {
     this.listener.remove();
+    ScandyCore.onTrackingDidUpdate(this.onTrackingDidUpdate)
     if( res.success ){
       ScandyCore.hasUSBScanner().then(
         () => {

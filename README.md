@@ -4,22 +4,29 @@ This is a React Native example using Scandy Core (scandy-core-rn)
 
 ## Setup
 
-#### Step 1 - NPM Install
+#### Step 1 - Extract Scandy Core SDK
+
+This is _an_ example you might need to modify slightly:
 
 ```shell
-npm link dependencies/ScandyCore/scandy-core-rn
+mv ~/Download/ScandyCore-*.zip ./dependencies/
+cd ./dependencies/
+unzip ScandyCore-*.zip
+rm ScandyCore-*.zip
+mv ScandyCore-* ScandyCore
 ```
-#### Step 2 - Update Gradle Settings
+
+#### Step 2 - Confirm Gradle Settings
 
 ```gradle
 // file: android/settings.gradle
 ...
 
 include ':scandy-core-rn'
-project(':scandy-core-rn').projectDir = new File(rootProject.projectDir, '../node_modules/scandy-core-rn/android')
+project(':scandy-core-rn').projectDir = new File(rootProject.projectDir, '../dependencies/ScandyCore/scandy-core-rn/android')
 ```
 
-#### Step 3 - Update app Gradle Build
+#### Step 3 - Confirm app Gradle Build
 
 ```gradle
 // file: android/app/build.gradle
@@ -53,53 +60,17 @@ public class MainApplication extends Application implements ReactApplication {
 
 #### Step 5 - Set license
 
-* Create the file: `android/app/src/main/assets/scandycore_license.json`
-* Paste your license from the email in `android/app/src/main/assets/scandycore_license.json`
+* Create the file: `App/scandycore_license.js`
 
-#### Step 6 - Require and use in Javascript
+```bash
+touch ./App/scandycore_license.js
+```
+
+* Paste your license from the email in the file like so:
 
 ```js
-// file: index.android.js
+export var license = '{"vendor":"Scandy LLC","license":{"product":"Scandy Core","version":"1.0","expiry":"never","hostid":"any","customer”:”foo@bar.com”,”userdata":"{}","signature":"49EDA410195D11E79D989C63E968CD3E49EDA410195D11E79D989C63E968CD3E49EDA410195D11E79D989C63E968CD3E49EDA410195D11E79D989C63E968CD3E"}}';
 
-import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
-
-import ScandyCoreVisualizer from 'scandy-core';
-
-export default class ReactNativeDemo extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <ScandyCoreVisualizer.ScandyCoreVisualizerInterface
-          style={styles.scandycore}
-          >
-        </ScandyCoreVisualizer.ScandyCoreVisualizerInterface>
-      </View>
-    );
-  }
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  scandycore: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ff0000',
-  },
-});
-
-AppRegistry.registerComponent('ReactNativeDemo', () => ReactNativeDemo);
 ```
 
 ## Building

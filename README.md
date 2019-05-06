@@ -2,7 +2,7 @@
 
 ### Please Note: These docs currently being updated - the Example code may not be in sync with the more recently updated directions below.
 
-#iOS Instructions
+# iOS Instructions
 
 ## Getting Started
 
@@ -76,7 +76,7 @@ The React team docs are a helpful in understanding how to go about writing these
 Create `RCT_EXPORT_METHODS` of the Scandy Core API methods you want exposed to javascript-land.
 
 
-#Android Instructions
+# Android Instructions
 
 ## Setup
 
